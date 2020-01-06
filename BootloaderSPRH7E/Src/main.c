@@ -33,17 +33,9 @@ int main(void)
 
 	W25n01g_memoryMappedModeEnable(&hqspi, false);
 
-	/*
-	JumpToApplication = *( pFunction* )(APPLICATION_ADDRESS + 4u);
-	__ASM volatile ("MSR msp, %0" : : "r" (APPLICATION_ADDRESS) : );
+	JumpToApplication = (pFunction) (*(__IO uint32_t*) (APPLICATION_ADDRESS + 4));
+	__set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
 	JumpToApplication();
-	*/
-
-	__ASM volatile("mov r0, %0" : : "r" (APPLICATION_ADDRESS) : );
-	__ASM volatile ("MSR msp, %0" : : "r" (APPLICATION_ADDRESS) : );
-	__ASM volatile("mov r0, %0" : : "r" (APPLICATION_ADDRESS + 4) : );
-	__ASM volatile("bx r0");
-
 
 	while (1)
 	{

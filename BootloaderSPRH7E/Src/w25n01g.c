@@ -104,9 +104,8 @@ bool W25n01g_memoryMappedModeEnable(QSPI_HandleTypeDef *hqspi, bool bufferRead)
 		confReg &= ~(W25N01G_CONFIG_BUFFER_READ_MODE);
 		W25n01g_writeStatusRegister(hqspi, W25N01G_CONF_REG, confReg);
 		cmd.DummyCycles		= W25N01G_DUMMY_BITS_FAST_READ_QUAD_CONT;
-		cmd.SIOOMode		= QSPI_SIOO_INST_ONLY_FIRST_CMD;
+		cmd.SIOOMode		= QSPI_SIOO_INST_EVERY_CMD;
 		cmd.AddressMode		= QSPI_ADDRESS_NONE;
-		//cmd.NbData			= 2048*3;
 	}
 
 	memMappedCfg.TimeOutActivation = QSPI_TIMEOUT_COUNTER_DISABLE;
