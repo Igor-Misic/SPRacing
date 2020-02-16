@@ -37,8 +37,8 @@ BUILD_DIR = build
 # C sources
 C_SOURCES =  \
 Src/main.c \
-Src/w25n01g.c \
-Src/quadspi.c \
+IM_STM32_External_Devices/Winbond/Src/w25q.c \
+IM_STM32_External_Devices/Winbond/Src/quadspi.c \
 Src/stm32h7xx_it.c \
 Src/stm32h7xx_hal_msp.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c \
@@ -121,7 +121,8 @@ C_INCLUDES =  \
 -IDrivers/STM32H7xx_HAL_Driver/Inc \
 -IDrivers/STM32H7xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32H7xx/Include \
--IDrivers/CMSIS/Include
+-IDrivers/CMSIS/Include \
+-IIM_STM32_External_Devices/Winbond/Inc
 
 
 # compile gcc flags

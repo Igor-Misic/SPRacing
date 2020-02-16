@@ -1,41 +1,50 @@
 #include "main.h"
 
-#include "w25n01g.h"
 #include "quadspi.h"
+#include "w25q.h"
 
 #include <stdbool.h>
 
 typedef	void (*pFunction)(void);
 pFunction JumpToApplication;
 
-#define APPLICATION_ADDRESS						QSPI_BASE
+#define APPLICATION_ADDRESS				QSPI_BASE
+#define W25Q128_FLASH_SIZE				13u // 2^(13+1) = 16384 B (16 MB) FLASH
+
 
 QSPI_HandleTypeDef hqspi;
 uint8_t idBuffer[3];
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_QUADSPI_Init(void);
 
 int main(void)
 {
 	HAL_Init();
 	SystemClock_Config();
 	MX_GPIO_Init();
-	MX_QUADSPI_Init();
+	QuadSpi_Init(&hqspi, W25Q128_FLASH_SIZE);
 
-	HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_SET);
+	bool success = true;
+	uint8_t buffer[3];
 
-	SysTick->CTRL = 0;
-	SysTick->LOAD = 0;
-	SysTick->VAL	= 0;
-	SCB->VTOR = APPLICATION_ADDRESS;
+	W25q_readJedec(&hqspi, buffer);
+	if(buffer[0] != 0xEF || buffer[1] != 0x70 || buffer[2] != 0x18 ) {
+		success = false;
+	}
 
-	W25n01g_memoryMappedModeEnable(&hqspi, false);
+	if(success) {
+		W25q_memoryMappedModeEnable(&hqspi);
 
-	JumpToApplication = (pFunction) (*(__IO uint32_t*) (APPLICATION_ADDRESS + 4));
-	__set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
-	JumpToApplication();
+		SysTick->CTRL = 0;
+		SysTick->LOAD = 0;
+		SysTick->VAL  = 0;
+		SCB->VTOR = APPLICATION_ADDRESS;
+
+		JumpToApplication = (pFunction) (*(__IO uint32_t*) (APPLICATION_ADDRESS + 4));
+		__set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
+		JumpToApplication();
+	}
 
 	while (1)
 	{
@@ -94,24 +103,6 @@ void SystemClock_Config(void)
 	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_QSPI;
 	PeriphClkInitStruct.QspiClockSelection = RCC_QSPICLKSOURCE_D1HCLK;
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-	{
-		Error_Handler();
-	}
-}
-
-static void MX_QUADSPI_Init(void)
-{
-
-	hqspi.Instance = QUADSPI;
-	hqspi.Init.ClockPrescaler = 1;
-	hqspi.Init.FifoThreshold = 1;
-	hqspi.Init.SampleShifting = QSPI_SAMPLE_SHIFTING_NONE;
-	hqspi.Init.FlashSize = 26;
-	hqspi.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_1_CYCLE;
-	hqspi.Init.ClockMode = QSPI_CLOCK_MODE_0;
-	hqspi.Init.FlashID = QSPI_FLASH_ID_1;
-	hqspi.Init.DualFlash = QSPI_DUALFLASH_DISABLE;
-	if (HAL_QSPI_Init(&hqspi) != HAL_OK)
 	{
 		Error_Handler();
 	}
