@@ -8,8 +8,8 @@
 typedef	void (*pFunction)(void);
 pFunction JumpToApplication;
 
-#define APPLICATION_ADDRESS				QSPI_BASE
-#define W25Q128_FLASH_SIZE				13u // 2^(13+1) = 16384 B (16 MB) FLASH
+#define APPLICATION_ADDRESS		QSPI_BASE
+#define W25Q128_FLASH_SIZE		23u // 2^(23+1) = 16777216 B (16 MB) FLASH
 
 
 QSPI_HandleTypeDef hqspi;
