@@ -34,7 +34,11 @@ int main(void)
 	}
 
 	if(success) {
-		W25q_memoryMappedModeEnable(&hqspi);
+		success = W25q_memoryMappedModeEnable(&hqspi);
+	}
+
+	if(success) {
+		HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_SET);
 
 		SysTick->CTRL = 0;
 		SysTick->LOAD = 0;
@@ -71,8 +75,8 @@ void SystemClock_Config(void)
 	RCC_OscInitStruct.HSEState = RCC_HSE_ON;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
 	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	RCC_OscInitStruct.PLL.PLLM = 5;
-	RCC_OscInitStruct.PLL.PLLN = 160;
+	RCC_OscInitStruct.PLL.PLLM = 2;
+	RCC_OscInitStruct.PLL.PLLN = 64;
 	RCC_OscInitStruct.PLL.PLLP = 2;
 	RCC_OscInitStruct.PLL.PLLQ = 2;
 	RCC_OscInitStruct.PLL.PLLR = 2;
@@ -86,8 +90,8 @@ void SystemClock_Config(void)
 	/** Initializes the CPU, AHB and APB busses clocks
 	*/
 	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-															|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2
-															|RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
+							  |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2
+							  |RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
 	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
 	RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
