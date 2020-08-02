@@ -8,7 +8,7 @@
 typedef	void (*pFunction)(void);
 pFunction JumpToApplication;
 
-#define APPLICATION_ADDRESS		QSPI_BASE
+#define APPLICATION_ADDRESS		0x90100000UL
 #define W25Q128_FLASH_SIZE		23u // 2^(23+1) = 16777216 B (16 MB) FLASH
 
 
